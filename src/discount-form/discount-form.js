@@ -4,7 +4,7 @@ import Button from 'button/button';
 import DiscountType from 'discount-type/discount-type';
 import SingleFormField from 'single-form-field.js/single-form-field';
 
-import StyledWrapper from 'discount-form/styles/wrapper';
+import StyledForm from 'discount-form/styles/form';
 import StyledContainer from 'discount-form/styles/container';
 import StyledErrorMessage from 'discount-form/styles/error-message';
 import StyledPreview from 'discount-form/styles/preview';
@@ -28,6 +28,8 @@ class DiscountForm extends Component {
       }
     };
   }
+
+  hasErrorMessage = (stateName) => !!this.state.formErrors[stateName];
 
   getCampainsPreview = () => {
     const discountCampaigns = {
@@ -162,7 +164,6 @@ class DiscountForm extends Component {
   getDiscountType = () => {
     const stateName = 'discountType';
     const labelText = 'Discount type';
-    const hasErrorMessage = !!this.state.formErrors[stateName];
 
     return (
       <StyledContainer>
@@ -171,7 +172,7 @@ class DiscountForm extends Component {
           stateName={stateName}
           noValidate={true}
           onChange={this.onChangeHandler()}
-          hasErrorMessage={hasErrorMessage}
+          hasErrorMessage={this.hasErrorMessage(stateName)}
           listName="discount-type-options"
           value={this.state[stateName]}
           errorMessage={this.getErrorMessage(stateName)}
@@ -188,23 +189,19 @@ class DiscountForm extends Component {
       ['longMessage', 'Long message'],
     ];
 
-    return simpleFieldsMap.map(([stateName, labelText], index) => {
-      const hasErrorMessage = !!this.state.formErrors[stateName];
-
-      return (
-        <StyledContainer key={stateName + index}>
-          <SingleFormField
-            labelText={labelText}
-            stateName={stateName}
-            noValidate={true}
-            onChange={this.onChangeHandler()}
-            hasErrorMessage={hasErrorMessage}
-            value={this.state[stateName]}
-            errorMessage={this.getErrorMessage(stateName)}
-          />
-        </StyledContainer>
-      );
-    });
+    return simpleFieldsMap.map(([stateName, labelText], index) => (
+      <StyledContainer key={stateName + index}>
+        <SingleFormField
+          labelText={labelText}
+          stateName={stateName}
+          noValidate={true}
+          onChange={this.onChangeHandler()}
+          hasErrorMessage={this.hasErrorMessage(stateName)}
+          value={this.state[stateName]}
+          errorMessage={this.getErrorMessage(stateName)}
+        />
+      </StyledContainer>
+    ));
   };
 
   handleSubmit = () => (event) => {
@@ -262,11 +259,11 @@ class DiscountForm extends Component {
   };
 
   getForm = () => (
-    <StyledWrapper onSubmit={this.handleSubmit()} autoComplete="off">
+    <StyledForm onSubmit={this.handleSubmit()} autoComplete="off">
       {this.getSimpleFields()}
       {this.getDiscountType()}
       {this.getFormButton()}
-    </StyledWrapper>
+    </StyledForm>
   );
 
   render() {
