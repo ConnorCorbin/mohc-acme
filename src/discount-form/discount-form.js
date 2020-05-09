@@ -62,7 +62,7 @@ class DiscountForm extends Component {
     };
 
     const maximumCharacters = maximumCharacterMap[stateName];
-    const isCharacterLengthValid = inputValue.length < maximumCharacters;
+    const isCharacterLengthValid = inputValue.length <= maximumCharacters;
 
     formErrors[stateName] = isCharacterLengthValid
       ? ''
