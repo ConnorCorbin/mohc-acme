@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button should render component 1`] = `
+<styled.div>
+  <styled.button
+    designType="submit"
+    disabled={true}
+    type="submit"
+  >
+    Nice button text
+  </styled.button>
+</styled.div>
+`;

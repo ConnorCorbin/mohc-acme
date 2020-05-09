@@ -11,6 +11,7 @@ const SingleFormField = ({
   hasErrorMessage,
   value,
   errorMessage,
+  list,
 }) => (
   <Fragment>
     <Label labelText={labelText} />
@@ -22,6 +23,7 @@ const SingleFormField = ({
       onChange={onChange}
       hasErrorMessage={hasErrorMessage}
       value={value}
+      list={list}
     />
     {errorMessage}
   </Fragment>
