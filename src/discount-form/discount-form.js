@@ -3,6 +3,7 @@ import React, { Component, Fragment } from 'react';
 import Button from 'button/button';
 import DiscountType from 'discount-type/discount-type';
 import SingleFormField from 'single-form-field.js/single-form-field';
+import Tags from 'tags/tags';
 
 import StyledForm from 'discount-form/styles/form';
 import StyledContainer from 'discount-form/styles/container';
@@ -15,12 +16,16 @@ class DiscountForm extends Component {
     this.state = {
       campaigns: [],
       campaign: '',
+      tagText: '',
+      preTagsStorage: [],
+      tags: [],
       discountType: '',
       shortMessage: '',
       mediumMessage: '',
       longMessage: '',
       formErrors: {
         campaign: '',
+        tagText: '',
         discountType: '',
         shortMessage: '',
         mediumMessage: '',
@@ -61,6 +66,7 @@ class DiscountForm extends Component {
       shortMessage: 15,
       mediumMessage: 30,
       longMessage: 60,
+      tagText: 30,
     };
 
     const maximumCharacters = maximumCharacterMap[stateName];
@@ -68,7 +74,7 @@ class DiscountForm extends Component {
 
     formErrors[stateName] = isCharacterLengthValid
       ? ''
-      : `Maximum of ${maximumCharacters} characaters allowed.`
+      : `Maximum of ${maximumCharacters} characaters allowed.`;
   };
 
   handlePermittedValues = (inputValue, formErrors, stateName) => {
@@ -81,6 +87,7 @@ class DiscountForm extends Component {
       mediumMessage: messageRegex,
       longMessage: messageRegex,
       discountType: defaultRegex,
+      tagText: defaultRegex,
     };
 
     if (formErrors[stateName]) return null;
@@ -88,7 +95,7 @@ class DiscountForm extends Component {
 
     formErrors[stateName] = hasInvalidCharacters
       ? "Contains invalid characters; only 'A-Z', 'a-z', '0-9' and '-' are allowed."
-      : ''
+      : '';
   };
 
   handleDiscountTypes = (inputValue, formErrors, stateName) => {
@@ -103,7 +110,7 @@ class DiscountForm extends Component {
 
     formErrors[stateName] = hasValidDiscountType
       ? ''
-      : 'Invalid discount type; ensure discount type matches allowed patterns.'
+      : 'Invalid discount type; ensure discount type matches allowed patterns.';
   };
 
   discountOnChangeHandler = (inputValue, formErrors, stateName) => this.handleDiscountTypes(inputValue, formErrors, stateName);
@@ -114,6 +121,7 @@ class DiscountForm extends Component {
       shortMessage: 'shortMessage',
       mediumMessage: 'mediumMessage',
       longMessage: 'longMessage',
+      tagText: 'tagText',
     };
 
     const actualStateName = stateNameMap[stateName];
@@ -143,6 +151,9 @@ class DiscountForm extends Component {
     const {
       formErrors,
       campaigns,
+      tagText,
+      tags,
+      preTagsStorage,
       ...formValues
     } = this.state;
 
@@ -157,6 +168,11 @@ class DiscountForm extends Component {
     Object.values(formValues).forEach(value => !value && (
       isFormValid = false
     ));
+
+    //Validate preTagsStorage has value
+    if (!Array.isArray(preTagsStorage) || !preTagsStorage.length) {
+      isFormValid = false
+    };
 
     return isFormValid;
   };
@@ -204,12 +220,47 @@ class DiscountForm extends Component {
     ));
   };
 
+  getTags = () => {
+    const { tagText, formErrors: { tagText: tagTextError} } = this.state;
+
+    const labelText = 'Tags';
+    const stateName = 'tagText';
+
+    const isButtonDisabled = !tagText || tagTextError;
+    const buttonDesignType = tagText && !tagTextError
+      ? 'submit'
+      : 'disabled';
+
+    const tagOnChangeHandler = () => () => this.setState(prevState => ({
+      preTagsStorage: [...prevState.preTagsStorage, this.state.tagText],
+      tagText: ''
+    }));
+
+    return (
+      <StyledContainer>
+        <Tags
+        labelText={labelText}
+        stateName={stateName}
+        noValidate={true}
+        onChangeHandler={this.onChangeHandler()}
+        hasErrorMessage={this.hasErrorMessage(stateName)}
+        buttonDesignType={buttonDesignType}
+        isButtonDisabled={isButtonDisabled}
+        value={this.state[stateName]}
+        onClickButtonHandler={tagOnChangeHandler()}
+        errorMessage={this.getErrorMessage(stateName)}
+        />
+      </StyledContainer>
+    );
+  };
+
   handleSubmit = () => (event) => {
     event.preventDefault();
 
     if (this.isFormValid()) {
       const {
         campaign,
+        preTagsStorage,
         shortMessage,
         mediumMessage,
         longMessage,
@@ -219,6 +270,7 @@ class DiscountForm extends Component {
       const discount = {
         name: campaign,
         discount: discountType,
+        tags: preTagsStorage,
         'short-message': shortMessage,
         'med-message': mediumMessage,
         'long-message': longMessage,
@@ -226,6 +278,7 @@ class DiscountForm extends Component {
   
       const resetFormStateValues = {
         campaign: '',
+        preTagsStorage: [],
         discountType: '',
         shortMessage: '',
         mediumMessage: '',
@@ -262,6 +315,7 @@ class DiscountForm extends Component {
     <StyledForm onSubmit={this.handleSubmit()} autoComplete="off">
       {this.getSimpleFields()}
       {this.getDiscountType()}
+      {this.getTags()}
       {this.getFormButton()}
     </StyledForm>
   );

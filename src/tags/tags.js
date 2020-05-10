@@ -10,6 +10,7 @@ const Tags = ({
   labelText,
   stateName,
   noValidate,
+  value,
   onChangeHandler,
   hasErrorMessage,
   buttonDesignType,
@@ -24,6 +25,7 @@ const Tags = ({
         placeholder={labelText}
         type="text"
         name={stateName}
+        value={value}
         noValidate={noValidate}
         onChange={onChangeHandler}
         hasErrorMessage={hasErrorMessage}
