@@ -100,7 +100,7 @@ class DiscountForm extends Component {
 
   handleDiscountTypes = (inputValue, formErrors, stateName) => {
     const permittedValues = ['BOGOF', 'BOGSHP', '3FOR2'];
-    const permittedRegex = ['B([0-9]+)G([0-9]+)', '([0-9]+):FOR:([0-9]+)'];
+    const permittedRegex = ['B([0-9]+)G([0-9]+$)', '([0-9]+):FOR:([0-9]+$)'];
 
     const isPermittedValue = permittedValues.includes(inputValue);
     const isPermittedRegex = permittedRegex.some(regex => 
